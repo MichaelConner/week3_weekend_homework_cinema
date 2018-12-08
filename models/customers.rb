@@ -64,6 +64,7 @@ class Customer
   end
 
   def buy_ticket(film)
+
     # minuses the films price from the customers wallet
     sql = "UPDATE customers SET wallet = $1 WHERE id = $2 "
     values = [@wallet - film.price, @id]

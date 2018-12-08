@@ -1,6 +1,7 @@
 require_relative('models/customers')
 require_relative('models/tickets')
 require_relative('models/films')
+require_relative('models/screenings')
 
 require('pg')
 require('pry')
@@ -42,6 +43,18 @@ ticket4.save
 ticket5 = Ticket.new( 'customer_id' => customer5.id, 'film_id' => film5.id)
 ticket5.save
 
+screening1 = Screening.new('film_id' => film1.id, 'showtime' => 2000, 'capacity' => 1)
+screening1.save
+screening2 = Screening.new('film_id' => film1.id, 'showtime' => 2230, 'capacity' => 2)
+screening2.save
+screening3 = Screening.new('film_id' => film2.id, 'showtime' => 1800, 'capacity' => 1)
+screening3.save
+screening4 = Screening.new('film_id' => film2.id, 'showtime' => 2030, 'capacity' => 2)
+screening4.save
+screening5 = Screening.new('film_id' => film2.id, 'showtime' => 2300, 'capacity' => 3)
+screening5.save
+
+
 # p Ticket.find_all
 # p Customer.find_all
 # p Film.find_all
@@ -71,3 +84,5 @@ ticket5.save
 # p film1.customer_headcount
 
 # customer1.buy_ticket(film5)
+
+# p screening1
