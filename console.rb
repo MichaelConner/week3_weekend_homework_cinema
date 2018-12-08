@@ -7,6 +7,7 @@ require('pg')
 require('pry')
 
 Ticket.delete_all
+Screening.delete_all
 Customer.delete_all
 Film.delete_all
 
@@ -32,17 +33,6 @@ film4.save
 film5 = Film.new( 'title' => 'Blue Velvet', 'price' => 7.00)
 film5.save
 
-ticket1 = Ticket.new( 'customer_id' => customer1.id, 'film_id' => film1.id)
-ticket1.save
-ticket2 = Ticket.new( 'customer_id' => customer1.id, 'film_id' => film2.id)
-ticket2.save
-ticket3 = Ticket.new( 'customer_id' => customer3.id, 'film_id' => film1.id)
-ticket3.save
-ticket4 = Ticket.new( 'customer_id' => customer4.id, 'film_id' => film4.id)
-ticket4.save
-ticket5 = Ticket.new( 'customer_id' => customer5.id, 'film_id' => film5.id)
-ticket5.save
-
 screening1 = Screening.new('film_id' => film1.id, 'showtime' => 2000, 'capacity' => 1)
 screening1.save
 screening2 = Screening.new('film_id' => film1.id, 'showtime' => 2230, 'capacity' => 2)
@@ -53,6 +43,17 @@ screening4 = Screening.new('film_id' => film2.id, 'showtime' => 2030, 'capacity'
 screening4.save
 screening5 = Screening.new('film_id' => film2.id, 'showtime' => 2300, 'capacity' => 3)
 screening5.save
+
+ticket1 = Ticket.new( 'customer_id' => customer1.id, 'film_id' => film1.id, 'screening_id' => screening1.id)
+ticket1.save
+ticket2 = Ticket.new( 'customer_id' => customer1.id, 'film_id' => film2.id, 'screening_id' => screening3.id)
+ticket2.save
+ticket3 = Ticket.new( 'customer_id' => customer3.id, 'film_id' => film1.id, 'screening_id' => screening2.id)
+ticket3.save
+ticket4 = Ticket.new( 'customer_id' => customer4.id, 'film_id' => film2.id, 'screening_id' => screening3.id)
+ticket4.save
+ticket5 = Ticket.new( 'customer_id' => customer5.id, 'film_id' => film2.id, 'screening_id' => screening3.id)
+ticket5.save
 
 
 # p Ticket.find_all
@@ -86,3 +87,10 @@ screening5.save
 # customer1.buy_ticket(film5)
 
 # p screening1
+# p screening1.no_tickets_sold
+
+p customer1.buy_ticket(screening1, film1)
+p customer1.buy_ticket(screening1, film1)
+p customer1.buy_ticket(screening1, film1)
+
+p film2.most_popular_time

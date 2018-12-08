@@ -1,6 +1,7 @@
 require_relative('../db/sql_runner')
 require_relative('films')
 require_relative('tickets')
+require_relative('screenings')
 
 require('pg')
 require('pry')
@@ -63,15 +64,18 @@ class Customer
     return films.map{ |film| Film.new(film)}.length
   end
 
-  def buy_ticket(film)
-
-    # minuses the films price from the customers wallet
-    sql = "UPDATE customers SET wallet = $1 WHERE id = $2 "
-    values = [@wallet - film.price, @id]
-    SqlRunner.run(sql, values)
-    # adds an entry to show the customer has a ticket for this film
-    ticket = Ticket.new( 'customer_id' => @id, 'film_id' => film.id)
-    ticket.save
+  def buy_ticket(screening, film)
+    #check that the film is not already at capacity
+    if screening.capacity < screening.no_tickets_sold
+       "Sorry, this film has sold out"
+    else # minuses the films price from the customers wallet
+       sql = "UPDATE customers SET wallet = $1 WHERE id = $2 "
+       values = [@wallet - film.price, @id]
+       SqlRunner.run(sql, values)
+       # adds an entry to show the customer has a ticket for this film
+       ticket = Ticket.new( 'customer_id' => @id, 'film_id' => screening.film_id, 'screening_id' => screening.id)
+       ticket.save
+    end
   end
 
   def self.find_by_id(id)
@@ -86,6 +90,5 @@ class Customer
     values = [@name, @wallet, @id]
     SqlRunner.run(sql, values)
   end
-
 
 end

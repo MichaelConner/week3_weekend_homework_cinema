@@ -1,6 +1,7 @@
 require_relative('../db/sql_runner')
 require_relative('customers')
 require_relative('tickets')
+require_relative('screenings')
 
 require('pg')
 require('pry')
@@ -76,5 +77,14 @@ class Film
     SqlRunner.run(sql, values)
   end
 
+  def most_popular_time
+    sql = "SELECT * FROM screenings WHERE id =
+           (SELECT screening_id FROM tickets
+           WHERE film_id = $1 GROUP BY screening_id
+           ORDER BY COUNT(screening_id) DESC LIMIT 1)"
+    values = [@id]
+    screening = SqlRunner.run(sql, values)[0]
+    return Screening.new(screening).showtime
+  end
 
 end

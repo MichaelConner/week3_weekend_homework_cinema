@@ -60,4 +60,13 @@ class Screening
     SqlRunner.run(sql, values)
   end
 
+  def no_tickets_sold
+    sql = "SELECT t.* FROM tickets t
+          INNER JOIN screenings s ON t.screening_id = s.id
+          WHERE screening_id = $1"
+    values = [@id]
+    screenings = SqlRunner.run(sql, values)
+    return screenings.map{ |screening| Screening.new(screening)}.length
+  end
+
 end
