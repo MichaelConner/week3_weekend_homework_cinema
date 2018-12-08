@@ -54,6 +54,25 @@ class Customer
     return films.map{ |film| Film.new(film)}
   end
 
+  def ticket_count
+    sql = "SELECT f.* FROM tickets t
+          INNER JOIN films f ON t.film_id = f.id
+          WHERE customer_id = $1"
+    values = [@id]
+    films = SqlRunner.run(sql, values)
+    return films.map{ |film| Film.new(film)}.length
+  end
+
+  def buy_ticket(film)
+    # minuses the films price from the customers wallet
+    sql = "UPDATE customers SET wallet = $1 WHERE id = $2 "
+    values = [@wallet - film.price, @id]
+    SqlRunner.run(sql, values)
+    # adds an entry to show the customer has a ticket for this film
+    ticket = Ticket.new( 'customer_id' => @id, 'film_id' => film.id)
+    ticket.save
+  end
+
   def self.find_by_id(id)
     sql = "SELECT * FROM customers WHERE id = $1 "
     values = [id]

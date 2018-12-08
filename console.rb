@@ -66,4 +66,8 @@ ticket5.save
 # Film.show_all
 
 # p customer1.films
+# p customer1.ticket_count
 # p film1.customers
+# p film1.customer_headcount
+
+# customer1.buy_ticket(film5)

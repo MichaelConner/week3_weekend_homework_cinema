@@ -54,6 +54,15 @@ class Film
     return customers.map{ |customer| Customer.new(customer)}
   end
 
+  def customer_headcount
+    sql = "SELECT c.* FROM tickets t
+          INNER JOIN customers c ON t.customer_id = c.id
+          WHERE film_id = $1"
+    values = [@id]
+    customers = SqlRunner.run(sql, values)
+    return customers.map{ |customer| Customer.new(customer)}.length
+  end
+
   def self.find_by_id(id)
     sql = "SELECT * FROM films WHERE id = $1 "
     values = [id]
