@@ -37,21 +37,21 @@ class Screening
 
   def self.find_all
     sql = "SELECT * FROM screenings"
-    tickets = SqlRunner.run(sql)
-    return tickets.map{ |ticket| Ticket.new(ticket)}
+    screenings = SqlRunner.run(sql)
+    return screenings.map{ |screening| Screening.new(screening)}
   end
 
   def self.show_all
     sql = "SELECT * FROM screenings"
-    tickets = SqlRunner.run(sql)
-    return tickets.map{ |ticket| p Ticket.new(ticket)}
+    screenings = SqlRunner.run(sql)
+    return screenings.map{ |screening| p Screening.new(screening)}
   end
 
   def self.find_by_id(id)
     sql = "SELECT * FROM screenings WHERE id = $1 "
     values = [id]
-    ticket = SqlRunner.run(sql, values)[0]
-    return Ticket.new(ticket)
+    screening = SqlRunner.run(sql, values)[0]
+    return Screening.new(screening)
   end
 
   def update

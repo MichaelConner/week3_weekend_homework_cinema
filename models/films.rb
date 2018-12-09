@@ -48,6 +48,7 @@ class Film
 
   def customers
     sql = "SELECT c.* FROM tickets t
+          INNER JOIN screenings s ON t.screening_id = s.id
           INNER JOIN customers c ON t.customer_id = c.id
           WHERE film_id = $1"
     values = [@id]
@@ -57,6 +58,7 @@ class Film
 
   def customer_headcount
     sql = "SELECT c.* FROM tickets t
+          INNER JOIN screenings s ON t.screening_id = s.id
           INNER JOIN customers c ON t.customer_id = c.id
           WHERE film_id = $1"
     values = [@id]
@@ -79,9 +81,12 @@ class Film
 
   def most_popular_time
     sql = "SELECT * FROM screenings WHERE id =
-           (SELECT screening_id FROM tickets
-           WHERE film_id = $1 GROUP BY screening_id
-           ORDER BY COUNT(screening_id) DESC LIMIT 1)"
+          (SELECT screening_id FROM screenings s
+          INNER JOIN tickets t ON t.screening_id = s.id
+          WHERE film_id = $1
+          GROUP BY screening_id
+          ORDER BY COUNT (screening_id) DESC
+          LIMIT 1)"
     values = [@id]
     screening = SqlRunner.run(sql, values)[0]
     return Screening.new(screening).showtime

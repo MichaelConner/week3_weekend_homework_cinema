@@ -48,7 +48,8 @@ class Customer
 
   def films
     sql = "SELECT f.* FROM tickets t
-          INNER JOIN films f ON t.film_id = f.id
+          INNER JOIN screenings s ON t.screening_id = s.id
+          INNER JOIN films f ON s.film_id = f.id
           WHERE customer_id = $1"
     values = [@id]
     films = SqlRunner.run(sql, values)
@@ -57,25 +58,32 @@ class Customer
 
   def ticket_count
     sql = "SELECT f.* FROM tickets t
-          INNER JOIN films f ON t.film_id = f.id
+          INNER JOIN screenings s ON t.screening_id = s.id
+          INNER JOIN films f ON s.film_id = f.id
           WHERE customer_id = $1"
     values = [@id]
     films = SqlRunner.run(sql, values)
     return films.map{ |film| Film.new(film)}.length
   end
 
-  def buy_ticket(screening, film)
+  def buy_ticket(screening)
     #check that the film is not already at capacity
-    if screening.capacity < screening.no_tickets_sold
+    if screening.capacity <= screening.no_tickets_sold
        "Sorry, this film has sold out"
     else # minuses the films price from the customers wallet
-       sql = "UPDATE customers SET wallet = $1 WHERE id = $2 "
-       values = [@wallet - film.price, @id]
+       sql = "UPDATE customers SET wallet =
+             (wallet-(SELECT price FROM screenings s
+             INNER JOIN films f on s.film_id = f.id
+             WHERE film_id = $1
+             LIMIT 1))
+             WHERE id = $2"
+       values = [screening.film_id, @id]
        SqlRunner.run(sql, values)
-       # adds an entry to show the customer has a ticket for this film
-       ticket = Ticket.new( 'customer_id' => @id, 'film_id' => screening.film_id, 'screening_id' => screening.id)
+       # then adds an entry to show the customer has a ticket for this film
+       ticket = Ticket.new( 'customer_id' => @id, 'screening_id' => screening.id)
        ticket.save
     end
+    # binding.pry
   end
 
   def self.find_by_id(id)
